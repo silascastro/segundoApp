@@ -21,6 +21,7 @@ import {
   
 } from 'react-native';
 import SmsListener from 'react-native-android-sms-listener';
+import SendSMS from 'react-native-sms'
 
 
 const instructions = Platform.select({
@@ -34,15 +35,6 @@ const LogLocation = async(data) => {
 
    
    
-    await ToastAndroid.showWithGravityAndOffset(
-      'localização atualizada',
-            50,
-      ToastAndroid.BOTTOM,
-      ToastAndroid.LONG,
-      25,
-      50,
-    );
-
  
 }
 
@@ -58,16 +50,9 @@ const SmsTask = async(data) => {
       50,
     );
     
-    AsyncStorage.setItem('msg',JSON.stringify(message));
+    //AsyncStorage.setItem('msg',JSON.stringify(message));
   });
-  ToastAndroid.showWithGravityAndOffset(
-      message.body,
-      50,
-      ToastAndroid.BOTTOM,
-      ToastAndroid.LONG,
-      25,
-      50,
-    );
+
 
 }
 
@@ -193,46 +178,73 @@ export default class App extends Component <Props> {
 	this.SMSReadSubscription = {};
   }
 
+  sendSms(){
+    /*SendSMS.send({
+      body: 'teste SMS!',
+      recipients: ['92991786441'],
+      successTypes: ['sent', 'queued'],
+      allowAndroitRReadPermission: true
+    }, (completed, cancelled, error) => {
+      console.log('SMS callback: completed: '+completed);
+    });*/
+    SendSMS.send(1,"+5592991969528", "Hey.., this is me!\nGood to see you. Have a nice day.",
+      (msg)=>{
+        console.info(msg);
+      }
+    );
+    
+  }
+
   componentDidMount(){
     requestLocation();
     this.SMSReadSubscription = SmsListener.addListener(message => {
-      ToastAndroid.showWithGravityAndOffset(
-      message.body,
-      50,
-      ToastAndroid.BOTTOM,
-      ToastAndroid.LONG,
-      25,
-      50,
-    );
+      console.info(message);
+      this.sendSms();
     });
-       
+    
   }
 
 componentWillUnmount() {
     //remove listener
     this.SMSReadSubscription.remove();
-  }
+}
 
   render() {
     return ( 
       <View style={styles.container}>
         <Text>{instructions}</Text>
-        <Button title="clique"
+        <Button title="ativar"
+
           onPress={() => {
-              AsyncStorage.getItem('msg').then(resp =>{
-                ToastAndroid.showWithGravityAndOffset(
-                  resp,
-                        60,
-                  ToastAndroid.BOTTOM,
-                  ToastAndroid.LONG,
-                  25,
-                  50,
-                );
-              })
+              
+              this.SMSReadSubscription = SmsListener.addListener(message => {
+			      ToastAndroid.showWithGravityAndOffset(
+			      message.originatingAddress,
+			      50,
+			      ToastAndroid.BOTTOM,
+			      ToastAndroid.LONG,
+			      25,
+			      50,
+			    );
+    			});
 
             
           }}
         />
+	<View style={{marginTop: 5}}>
+		<Button title="desativar"
+			onPress={() => {
+				this.SMSReadSubscription.remove();
+			}}
+		/>
+	</View>
+  <View style={{marginTop: 5}}>
+		<Button title="enviar msg"
+			onPress={
+				this.sendSms.bind(this)
+			}
+		/>
+	</View>
         
       </View>
     );

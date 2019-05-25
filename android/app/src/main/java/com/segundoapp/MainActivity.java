@@ -1,6 +1,11 @@
 package com.segundoapp;
 
+import android.content.Intent;
+
 import com.facebook.react.ReactActivity;
+import android.content.Intent;
+import com.tkporter.sendsms.SendSMSObserver;
+import com.tkporter.sendsms.SendSMSPackage;
 
 public class MainActivity extends ReactActivity {
 
@@ -11,5 +16,13 @@ public class MainActivity extends ReactActivity {
     @Override
     protected String getMainComponentName() {
         return "segundoApp";
+
+
     }
+
+   /* @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        SendSMSPackage.getInstance().onActivityResult(requestCode, resultCode,data);
+    }*/
 }

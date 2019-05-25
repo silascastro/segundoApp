@@ -8,6 +8,7 @@ import android.location.Location;
 
 import android.content.Context;
 import com.facebook.react.ReactApplication;
+//import com.tkporter.sendsms.SendSMSPackage;
 import com.centaurwarchief.smslistener.SmsListenerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -26,6 +27,8 @@ import com.segundoapp.service.MessageService;
 
 import java.util.Arrays;
 import java.util.List;
+import com.rhaker.reactnativesmsandroid.RNSmsAndroidPackage;
+import com.someone.sendsms.SendSMSPackage;
 
 public class MainApplication extends Application implements ReactApplication {
     private final LocationListener listener = new LocationListener() {
@@ -63,7 +66,9 @@ public class MainApplication extends Application implements ReactApplication {
         protected List<ReactPackage> getPackages() {
             return Arrays.<ReactPackage>asList(
                     new MainReactPackage(),
-            new SmsListenerPackage()
+            //SendSMSPackage.getInstance(),
+            new SmsListenerPackage(),
+            new SendSMSPackage()
             );
         }
 
@@ -99,6 +104,7 @@ public class MainApplication extends Application implements ReactApplication {
 
         SoLoader.init(this, /* native exopackage */ false);
     }
+
 
 
 
