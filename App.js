@@ -21,7 +21,8 @@ import {
   
 } from 'react-native';
 import SmsListener from 'react-native-android-sms-listener';
-import SendSMS from 'react-native-sms'
+import SendSMS from 'react-native-sms-x'
+import * as Permission from './permissions';
 
 
 const instructions = Platform.select({
@@ -32,26 +33,9 @@ const instructions = Platform.select({
 
 const LogLocation = async(data) => {
 
-
-   
-   
- 
 }
 
 const SmsTask = async(data) => {
-
-  SmsListener.addListener((message) => {
-    ToastAndroid.showWithGravityAndOffset(
-      'mensagem recebida',
-      50,
-      ToastAndroid.BOTTOM,
-      ToastAndroid.LONG,
-      25,
-      50,
-    );
-    
-    //AsyncStorage.setItem('msg',JSON.stringify(message));
-  });
 
 
 }
@@ -62,144 +46,66 @@ AppRegistry.registerHeadlessTask('LogLocation',()=> LogLocation);
 
 
 
-async function requestLocationCoarse() {
-  try{
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-      {
-        title: 'Cool App Coarse Location Permission',
-      message:
-        'Cool  App needs access to your location ' +
-        'so you can take.',
-      buttonNeutral: 'Ask Me Later',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'OK',
-      },
-    );
-    if(granted== PermissionsAndroid.RESULTS.GRANTED){
-      requestReadSms();
-    }else{
-      alert("Permissão negada")
-      //requestLocation();
-    }
-  }catch(err){
-    alert(err);
-  }
-};
-
-async function requestReadSms() {
-  try{
-    //
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.READ_SMS,
-      {
-        title: 'Cool App READ_SMS Permission',
-      message:
-        'Cool  App needs access to your location ' +
-        'so you can take.',
-      buttonNeutral: 'Ask Me Later',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'OK',
-      },
-    );
-    if(granted== PermissionsAndroid.RESULTS.GRANTED){
-      requestReceiveSms();
-    }else{
-      alert("Permissão negada")
-      //requestLocation();
-    }
-  }catch(err){
-    alert(err);
-  }
-};
-
-
-
-
-async function requestReceiveSms() {
-  try{
-    //
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.RECEIVE_SMS,
-      {
-        title: 'Cool App READ_SMS Permission',
-      message:
-        'Cool  App needs access to your location ' +
-        'so you can take.',
-      buttonNeutral: 'Ask Me Later',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'OK',
-      },
-    );
-    if(granted== PermissionsAndroid.RESULTS.GRANTED){
-      //requestBroadcastSms();
-    }else{
-      alert("Permissão negada")
-      //requestLocation();
-    }
-  }catch(err){
-    alert(err);
-  }
-};
-
-
-async function requestLocation() {
-  try{
-    //
-    const granted = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'Cool App Location Permission',
-      message:
-        'Cool  App needs access to your location ' +
-        'so you can take.',
-      buttonNeutral: 'Ask Me Later',
-      buttonNegative: 'Cancel',
-      buttonPositive: 'OK',
-      },
-    );
-    if(granted== PermissionsAndroid.RESULTS.GRANTED){
-      requestLocationCoarse();
-    }else{
-      alert("Permissão negada")
-      //requestLocation();
-    }
-  }catch(err){
-    alert(err);
-  }
-};
 
 
 
 type Props = {};
 export default class App extends Component <Props> {
   constructor(props){
-	super(props);
-	this.SMSReadSubscription = {};
+    super(props);
+    this.state ={ dataSource: [] };
+    this.SMSReadSubscription = {};
   }
 
-  sendSms(){
-    /*SendSMS.send({
-      body: 'teste SMS!',
-      recipients: ['92991786441'],
-      successTypes: ['sent', 'queued'],
-      allowAndroitRReadPermission: true
-    }, (completed, cancelled, error) => {
-      console.log('SMS callback: completed: '+completed);
-    });*/
-    SendSMS.send(1,"+5592991969528", "Hey.., this is me!\nGood to see you. Have a nice day.",
+  sendSms(body, number){
+    SendSMS.send(123,number, body,
       (msg)=>{
-        console.info(msg);
+        console.log(msg);
       }
     );
     
   }
 
+  sendSmsToWs(body, number) {
+    var data = {
+      sToken: "testeatende",
+      idClient: 901,
+      sPassWord: "123",
+      sCellFone: number,
+      sAplication: "SMS",
+      sMessage: body
+    };
+   fetch('https://www.mrkoch.com/mrkoch/wsatendente.wso/SendReceive/',{
+        method: 'POST',
+        headers: {
+          //Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    }).then((response) => response.json())
+    .then((responseJson) => {
+      let len = responseJson.length;
+      for(var e=0;e<len;e++){
+        //console.log(responseJson[e]);
+        this.sendSms(responseJson[e].sMensagem, responseJson[e].sCellFone);
+      }
+
+      
+        
+    }).catch((error) => {
+      console.error(error);
+    });
+  }
+
   componentDidMount(){
-    requestLocation();
+
+    Permission.requestLocation();
     this.SMSReadSubscription = SmsListener.addListener(message => {
       console.info(message);
-      this.sendSms();
+      if(message.originatingAddress.length == 14){
+        //this.sendSms(message.body, message.originatingAddress.slice(3));
+        this.sendSmsToWs(message.body, message.originatingAddress.slice(3));
+      }
     });
     
   }
@@ -240,9 +146,11 @@ componentWillUnmount() {
 	</View>
   <View style={{marginTop: 5}}>
 		<Button title="enviar msg"
-			onPress={
-				this.sendSms.bind(this)
-			}
+			onPress={() =>{
+       // this.sendSms("teste", "92991786441");
+       this.sendSmsToWs("teste", "92991786441");
+				//this.sendSms.bind(this)
+			}}
 		/>
 	</View>
         

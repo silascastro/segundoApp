@@ -87,10 +87,10 @@ public class MainApplication extends Application implements ReactApplication {
     public void onCreate() {
         super.onCreate();
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         // Start requesting for location
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, listener);
-        SmsListenerBrod.bindListener(new SmsListener.OTPListener() {
+        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, listener);
+       /* SmsListenerBrod.bindListener(new SmsListener.OTPListener() {
             @Override
             public void messageReceived(String messageText, String messageSender) {
                 Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
@@ -100,7 +100,7 @@ public class MainApplication extends Application implements ReactApplication {
                 getApplicationContext().startService(serviceIntent);
                 HeadlessJsTaskService.acquireWakeLockNow(getApplicationContext());
             }
-        });
+        });*/
 
         SoLoader.init(this, /* native exopackage */ false);
     }
