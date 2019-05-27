@@ -8,7 +8,7 @@ import android.location.Location;
 
 import android.content.Context;
 import com.facebook.react.ReactApplication;
-//import com.tkporter.sendsms.SendSMSPackage;
+//import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.centaurwarchief.smslistener.SmsListenerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -29,6 +29,8 @@ import java.util.Arrays;
 import java.util.List;
 import com.rhaker.reactnativesmsandroid.RNSmsAndroidPackage;
 import com.someone.sendsms.SendSMSPackage;
+//import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+
 
 public class MainApplication extends Application implements ReactApplication {
     private final LocationListener listener = new LocationListener() {
@@ -86,21 +88,6 @@ public class MainApplication extends Application implements ReactApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        //LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        // Start requesting for location
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 1, listener);
-       /* SmsListenerBrod.bindListener(new SmsListener.OTPListener() {
-            @Override
-            public void messageReceived(String messageText, String messageSender) {
-                Intent serviceIntent = new Intent(getApplicationContext(), MessageService.class);
-                //serviceIntent.putExtra("msg: ","message: "+messageText+"\nfrom: "+messageSender);
-
-                //serviceIntent.putExtra("msg",messageSender);
-                getApplicationContext().startService(serviceIntent);
-                HeadlessJsTaskService.acquireWakeLockNow(getApplicationContext());
-            }
-        });*/
 
         SoLoader.init(this, /* native exopackage */ false);
     }

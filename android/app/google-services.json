@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "756669092012",
+    "firebase_url": "https://wsatende.firebaseio.com",
+    "project_id": "wsatende",
+    "storage_bucket": "wsatende.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:756669092012:android:05c2542d596dbd75",
+        "android_client_info": {
+          "package_name": "com.segundoapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "756669092012-nqi0j9mck4rrpukrmqut023igki1tljc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD36PNHtYnsEmG4hBuXIre9IUvgmvo_fiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "756669092012-nqi0j9mck4rrpukrmqut023igki1tljc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

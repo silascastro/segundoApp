@@ -18,12 +18,13 @@ import {
   Alert,
   PermissionsAndroid,
   ToastAndroid,
+  Linking
   
 } from 'react-native';
 import SmsListener from 'react-native-android-sms-listener';
-import SendSMS from 'react-native-sms-x'
-import * as Permission from './permissions';
+import SendSMS from 'react-native-sms-x';
 
+import * as Permission from './permissions';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
@@ -40,10 +41,10 @@ const SmsTask = async(data) => {
 
 }
 
+
    
 AppRegistry.registerHeadlessTask('SmsTask', () => SmsTask);
 AppRegistry.registerHeadlessTask('LogLocation',()=> LogLocation);
-
 
 
 
@@ -53,8 +54,10 @@ type Props = {};
 export default class App extends Component <Props> {
   constructor(props){
     super(props);
-    this.state ={ dataSource: [] };
+
     this.SMSReadSubscription = {};
+    
+
   }
 
   sendSms(body, number){
@@ -97,23 +100,38 @@ export default class App extends Component <Props> {
     });
   }
 
+
+
   componentDidMount(){
 
     Permission.requestLocation();
+
+
     this.SMSReadSubscription = SmsListener.addListener(message => {
-      console.info(message);
+      
       if(message.originatingAddress.length == 14){
-        //this.sendSms(message.body, message.originatingAddress.slice(3));
         this.sendSmsToWs(message.body, message.originatingAddress.slice(3));
+      }
+      else{
+        ToastAndroid.showWithGravityAndOffset(
+          'mensagem recebida',
+          50,
+          ToastAndroid.BOTTOM,
+          ToastAndroid.LONG,
+          25,
+          50,
+        );
       }
     });
     
   }
 
-componentWillUnmount() {
-    //remove listener
-    this.SMSReadSubscription.remove();
-}
+
+
+  componentWillUnmount() {
+      //remove listener
+      this.SMSReadSubscription.remove();
+  }
 
   render() {
     return ( 
@@ -122,8 +140,8 @@ componentWillUnmount() {
         <Button title="ativar"
 
           onPress={() => {
-              
-              this.SMSReadSubscription = SmsListener.addListener(message => {
+            
+          this.SMSReadSubscription = SmsListener.addListener(message => {
 			      ToastAndroid.showWithGravityAndOffset(
 			      message.originatingAddress,
 			      50,
@@ -150,6 +168,23 @@ componentWillUnmount() {
        // this.sendSms("teste", "92991786441");
        this.sendSmsToWs("teste", "92991786441");
 				//this.sendSms.bind(this)
+			}}
+		/>
+	</View>
+  <View style={{marginTop: 5}}>
+    <Button title="enviar whatsapp"
+    color="green"
+			onPress={() =>{
+       Linking.openURL(
+         'https://api.whatsapp.com/send?phone=15551234567&text=Im%20interested%20in%20your%20car%20for%20sale'
+       )
+			}}
+		/>
+	</View>
+  <View style={{marginTop: 5}}>
+		<Button title="enviar notificação"
+			onPress={() => {
+				console.log('click');
 			}}
 		/>
 	</View>

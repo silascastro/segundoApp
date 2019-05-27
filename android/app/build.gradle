@@ -149,6 +149,9 @@ android {
 }
 
 dependencies {
+    implementation "com.google.android.gms:play-services-base:15.0.1"
+    implementation "com.google.firebase:firebase-core:16.0.1"
+    implementation project(':react-native-firebase')
     implementation project(':react-native-sms')
     implementation project(':react-native-android-sms-listener')
     implementation project(':react-native-sms-android')
@@ -164,3 +167,6 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+
+apply plugin: 'com.google.gms.google-services'
